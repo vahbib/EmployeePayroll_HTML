@@ -1,111 +1,158 @@
-.header-content{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    border: 0px solid green;
-
+body{
+    width: 64%;
+    max-width:500 px;
+    margin:0px auto;
+    padding:2em;
 }
 
-.logo-content{
+.header content{
     display: flex;
     flex-direction: row;
-    align-items: center;
+    border: 0px solid black;
     justify-content: center;
-    width: 80%;
-
 }
 
-.emp-txt{
-    font:normal normal bold 20px/25px Montserrat;
+.logodiv{
+    display: flex;
+    flex-direction: row;
+    align-items: center; 
+    width: 80%;   
+    border: 0 solid green;
+    margin-left: 48%;
+}
+
+.logodiv img{
+    border: 0px solid #42515f;
+}
+
+.emp-text{
+    font: normal normal bold 20px/25px Montserrat;
     font-family: "Montserrat", sans-serif;
-    letter-spacing:0px;
-    color:red;
+    letter-spacing: 0px;
+    color: #82a70c;
     text-transform: capitalize;
-
+    font-size: medium;
+    line-height: normal;
 }
 
-.emp-payroll{
-    color: #422515;
-}
-
-.form-content{
-    min-height: calc(100%-80px);
+.form-content {
     background-color: #f7f7f7;
     display: flex;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     border: 0px solid green;
-
+    margin-right: 5%;
 }
 
 .form{
-    width:65%;
-    padding: 44px 60px;
-    background: #ffffff 0% 0% no-repeat padding-box;
-    box-shadow: 1px solid #f5f5f5;
+    width: 70%;
+    padding: 100px 100px; 
+    box-shadow: 0px 3px 6px #00000029;
+    border: 1px solid #f5f5f5;
     border-radius: 8px;
     opacity: 1;
-
 }
 
-.form-head{
+.form-head {
     font: normal normal bold 24px/37px Roboto;
     letter-spacing: 0px;
-    color:#42515f;
+    color: #445a2b;
     text-transform: capitalize;
     opacity: 1;
     padding-bottom: 20px;
-
-
+    margin-left: 2.5in;
 }
-
 .row-content{
     display: flex;
     flex-direction: row;
-    margin-bottom: 10px;
+    padding-bottom: 10px;
     align-items: center;
-    border:0px solid green;
-
+    border: 0px solid green;
 }
 
-.label{
+label {
     min-width: 140px;
-
-}
-
-label{
-    padding: 12px 12px 12px 0;
     display: inline-block;
-
+    padding: 12px 12px 12px 0px;
+    font: 10% sans-serif;
 }
 
-.text{
-    font-size: 16px;
-    color: #42515f;
-    opacity: 1;
-    font-family: Roboto;
 
-}
-
-.input{
+.input {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ccc ;
+    border: 1px 1px #ccc;
     border-radius: 4px;
     resize: vertical;
 }
-.profile_radio{
+
+.text{
+    font-size: 14px;
+    color: #42515f;
+    opacity: 1;
+    font-weight: bold;
+    font-family: Roboto;
+}
+
+.profile-radio-content {
     display: flex;
     flex-direction: row;
 }
-.profile_radio > label{
+
+.profile-radio-content > label {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
+
 .profile {
-    width: 40px;
-    border-radius: 50%;
+    width: 60px;
+    border-radius: 20%;
     margin-left: 12px;
+
+}
+
+select{
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font: normal normal 14px Roboto;
+    color: #42515f;
+}
+
+.date-select{
+    width: 60px;
+}
+.month-select{
+    width: 120px;
+}
+.year-select{
+    width: 100px;
+}
+
+.notes{
+    height: 50px;
+    width: 500px;
+}
+.button-Parent{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.button{
+    font-size: 16px;
+    font-family: Roboto;
+    font-weight: 400;
+    color: #42515f;
+    min-width: 100px;
+    padding: 2px 1px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.buttonSubmit{
+    margin-right: 20px;
+}
+.cancelButton{
+    text-decoration: none;
 }
