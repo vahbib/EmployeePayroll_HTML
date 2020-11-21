@@ -7,7 +7,7 @@ salary_op.textContent = salary.value
 } )
 
 //UC 9 & 10
-class EmployeePayrollData{
+class EmployeePayrollData{ 
     //properties
     // id;
     // name;
