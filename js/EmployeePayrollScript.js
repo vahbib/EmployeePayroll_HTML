@@ -1,12 +1,29 @@
-const salary = document.querySelector('#salary')
-const salary_op = document.querySelector('.salary-output-text')
-salary_op.textContent = salary.value
-salary.addEventListener('input', 
-function() {
-salary_op.textContent = salary.value
-} )
+/*
+Applying event listener on name and salary when document is loaded 
+*/
+window.addEventListener('DOMContentLoaded', (event) => {
+    const name = document.querySelector('#name');
+    const nameError = document.querySelector('.name-error');
+    name.addEventListener('input', function() {
+        if(name.value.length == 0) {
+            nameError.textContent = "";
+            return;
+        }
+        try {
+            (new EmployeePayrollData()).name = name.value;
+            nameError.textContent = "";
+        } catch (e) {
+            nameError.textContent = e;
+        }
+    });
+    const salary = document.querySelector('#salary')
+    const output = document.querySelector('.salary-output-text')
+    output.textContent = salary.value;
+    salary.addEventListener('input', function () {
+        output.textContent = salary.value;
+    });
+});
 
-//UC 9 & 10
 class EmployeePayrollData{ 
     //properties
     // id;
@@ -24,7 +41,7 @@ class EmployeePayrollData{
     }
     get name(){ return this._name;}
     set name(name){
-        let nameRegex = RegExp('^[A-Z]{1}[a-z]{3,}$')
+        let nameRegex = RegExp('^[A-Z]{1}[a-z\\sA-Z]{2,}$')
         if(nameRegex.test(name)) this._name = name;
         else throw "Name is Incorrect!";
     }
@@ -76,25 +93,25 @@ let employeeData = new EmployeePayrollData();
 
 function save(){
     try {
-        employeePayroll.name = document.getElementById('name').value;
-        employeePayroll.profilePic = getRadioValue(document.getElementsByName('profile'));
-        employeePayroll.gender = getRadioValue(document.getElementsByName('gender'));
-        employeePayroll.department = getCheckBoxValue(document.getElementsByClassName('department'));
-        employeePayroll.salary = output.textContent;
+        employeeData.name = document.getElementById('name').value;
+        employeeData.profilePic = getRadioValue(document.getElementsByName('profile'));
+        employeeData.gender = getRadioValue(document.getElementsByName('gender'));
+        employeeData.department = getCheckBoxValue(document.getElementsByClassName('department'));
+        employeeData.salary = output.textContent;
 
         let start=new Array();
         start.push(getElementById('day').value);
         start.push(getElementById('month').value);
         start.push(getElementById('year').value);
-        employeePayroll.startDate = start;
+        employeeData.startDate = start;
 
-        employeePayroll.notes = document.getElementById('notes').value
-        console.log(employeePayroll);
+        employeeData.notes = document.getElementById('notes').value
+        console.log(employeeData);
     }
     catch (exception) {
         console.error(exception)
     }
-    employees.push(employeePayroll)
+    employees.push(employeeData)
 }
 
 function getRadioValue(radios) {
