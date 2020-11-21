@@ -24,6 +24,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 
+
 class EmployeePayrollData{ 
     //properties
     // id;
@@ -68,10 +69,11 @@ class EmployeePayrollData{
 
     get startDate() {return this._startDate;}
     set startDate(startDate){
-        let newDate = new Date(startDate[2],startDate[1],startDate[0]);
-        let startDateCompare = dates.compare(newDate,new Date());
-        if(startDateCompare<=0) this._startDate = newDate;
-        else throw 'Start Date is incorrect';
+        let newDate = new Date(startDate[2], startDate[1],startDate[0]);
+        let currDate = new Date();
+        if(currDate <= newDate) 
+            this._startDate = newDate;
+        else throw "Date is Incorrect!"
     }
 
     get notes() {return this._notes}
@@ -81,37 +83,49 @@ class EmployeePayrollData{
 
     //toString method
     toString(){
-        return "id="+this.id+" : name="+this.name+
-                " : gender="+this.gender+" : Dept="+this.department+
-                " : salary="+this.salary+" : Start Date="+empDate
-                +" : Notes="+this.notes;
+        return "\nId="+this.id+"\nName="+this.name+
+                "\nGender="+this.gender+"\nDept="+this.department+
+                "\nSalary="+this.salary+"\nStart Date="+ this.startDate
+                +"\nNotes="+this.notes;
     }
 }
 
 let employees=new Array();
 let employeeData = new EmployeePayrollData();
 
-function save(){
+const save = () => {
     try {
         employeeData.name = document.getElementById('name').value;
         employeeData.profilePic = getRadioValue(document.getElementsByName('profile'));
         employeeData.gender = getRadioValue(document.getElementsByName('gender'));
         employeeData.department = getCheckBoxValue(document.getElementsByClassName('department'));
-        employeeData.salary = output.textContent;
+        employeeData.salary = document.getElementById('salary').value;
 
         let start=new Array();
-        start.push(getElementById('day').value);
-        start.push(getElementById('month').value);
-        start.push(getElementById('year').value);
+        start.push(document.getElementById('day').value);
+        start.push(document.getElementById('month').value);
+        start.push(document.getElementById('year').value);
         employeeData.startDate = start;
 
-        employeeData.notes = document.getElementById('notes').value
+        employeeData.notes = document.getElementById('notes').value;
         console.log(employeeData);
+
+        createAndUpdateStorage(employeeData);
+        alert(employeeData);
     }
     catch (exception) {
-        console.error(exception)
+        alert(exception);
     }
-    employees.push(employeeData)
+    employees.push(employeeData);
+}
+function createAndUpdateStorage(employeeData) {
+    let employeePayrollList = JSON.parse(localStorage.getItem("EmployeePayrollList"));
+    if(employeePayrollList != undefined)
+        employeePayrollList.push(employeeData);
+    else
+        employeePayrollList = [employeeData];
+    alert(employeePayrollList.toString());
+    localStorage.setItem("EmployeePayrollList", JSON.stringify(employeePayrollList));
 }
 
 function getRadioValue(radios) {
@@ -122,11 +136,34 @@ function getRadioValue(radios) {
     }
 }
 function getCheckBoxValue(boxes) {
-    let boxlist = []
+    let boxlist = [];
     for (var i = 0; i < boxes.length; i++) {
         if (boxes[i].checked) {
-            boxlist.push(boxes[i].value)
+            boxlist.push(boxes[i].value);
         }
     }
     return boxlist;
+}
+
+const resetForm = () => {
+    setValue('#name', ' ');
+    unsetSelectedValue('[name=profile]');
+    unsetSelectedValue('[name=gender]');
+    unsetSelectedValue('[name=department]');
+    setValue('#salary', '');
+    setValue('#notes', '');
+    setValue('#day', '1');
+    setValue('#month', 'January');
+    setValue('#year', '2020');
+}
+
+const unsetSelectedValue = (propertyValue) => {
+    let allItems = document.querySelectorAll(propertyValue);
+    allItems.forEach(item => {
+        item.checked = false;
+    });
+}
+const setValue = (id, value) => {
+    const element = document.querySelector(id);
+    element.value = value;
 }
