@@ -24,6 +24,7 @@
                     <div class="row-content">
                         <label class="label text" for="name">Name: </label>
                         <input class="input" type="text" id="name" name="name" placeholder="Enter your name.." style="height: 1cm;" required>
+                        <error-output class="name-error" for="name"></error-output>
                     </div>
                     <div class="row-content">
                         <label class="label text" for="name">Profile Image: </label>
@@ -130,14 +131,16 @@
                                 <option value="2017">2017</option>
                                 <option value="2016">2016</option>
                             </select>
+                            <error-output class="date-error" for="startDate"></error-output>
                         </div>
+                        
                     </div>
                     <div class="row-content">
                         <label class="label text" for="notes">Notes: </label>
                         <textarea class="notes" id="notes" name="notes" placeholder="Additional Notes"></textarea>
                     </div>
                     <div class="button-Parent">
-                        <a href=" " class="button cancelButton">Cancel</a>
+                        <a href="../pages/homePage.html" class="button cancelButton">Cancel</a>
                         <div class="submit reset">
                             <button type="submit" class="button buttonSubmit" id="submit">Submit</button>
                             <button type="reset" class="button" id="reset">Reset</button>
