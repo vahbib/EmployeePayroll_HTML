@@ -1,6 +1,7 @@
 /*
 Applying event listener on name and salary when document is loaded 
 */
+let employeeData = {};
 window.addEventListener('DOMContentLoaded', (event) => {
     const name = document.querySelector('#name');
     const nameError = document.querySelector('.name-error');
@@ -16,12 +17,29 @@ window.addEventListener('DOMContentLoaded', (event) => {
             nameError.textContent = e;
         }
     });
+
+    const date = document.querySelector('#startDate');
+    date.addEventListener('input', function() {
+        let startDate = new Array();
+        startDate.push(document.querySelector("#day").value);
+        startDate.push(document.querySelector("#month").value);
+        startDate.push(document.querySelector("#year").value);
+        try {
+            (new EmployeePayrollData()).startDate = new Date(startDate[2],startDate[1],startDate[0]);
+            setTextValue('.date-error', "");
+        } catch (e) {
+            setTextValue('.date-error', e);
+        }
+    });
+
     const salary = document.querySelector('#salary')
     const output = document.querySelector('.salary-output-text')
     output.textContent = salary.value;
     salary.addEventListener('input', function () {
         output.textContent = salary.value;
     });
+
+    checkForUpdate();
 });
 
 
@@ -68,12 +86,14 @@ class EmployeePayrollData{
     }
 
     get startDate() {return this._startDate;}
-    set startDate(startDate){
-        let newDate = new Date(startDate[2], startDate[1],startDate[0]);
-        let currDate = new Date();
-        if(currDate <= newDate) 
-            this._startDate = newDate;
-        else throw "Date is Incorrect!"
+    set startDate(newDate){
+        let now = new Date();
+        if(newDate > now) 
+            throw "Start Date Is A Future Date!";
+        var diff = Math.abs(now.getTime() - newDate.getTime());
+        if(diff / (1000 * 60 * 60 * 24) > 30)
+            throw "Start Date Is A Beyond 30 Days!";
+        this._startDate = newDate;
     }
 
     get notes() {return this._notes}
@@ -91,26 +111,36 @@ class EmployeePayrollData{
 }
 
 let employees=new Array();
-let employeeData = new EmployeePayrollData();
 
-const save = () => {
+const save = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    try{
+        setEmployeePayrollObject();
+        createAndUpdateStorage();
+        resetForm();
+        window.location.replace(site_properties.home_page);
+    }catch(exception){
+        console.error(exception);
+        alert(exception);
+    }
+}
+function setEmployeePayrollObject() {
     try {
-        employeeData.name = document.getElementById('name').value;
-        employeeData.profilePic = getRadioValue(document.getElementsByName('profile'));
-        employeeData.gender = getRadioValue(document.getElementsByName('gender'));
-        employeeData.department = getCheckBoxValue(document.getElementsByClassName('department'));
-        employeeData.salary = document.getElementById('salary').value;
+        employeeData._name = document.getElementById('name').value;
+        employeeData._profilePic = getRadioValue(document.getElementsByName('profile'));
+        employeeData._gender = getRadioValue(document.getElementsByName('gender'));
+        employeeData._department = getCheckBoxValue(document.getElementsByClassName('department'));
+        employeeData._salary = document.getElementById('salary').value;
 
         let start=new Array();
         start.push(document.getElementById('day').value);
         start.push(document.getElementById('month').value);
         start.push(document.getElementById('year').value);
-        employeeData.startDate = start;
+        employeeData._startDate = new Date(start[2],start[1],start[0]);
 
-        employeeData.notes = document.getElementById('notes').value;
+        employeeData._notes = document.getElementById('notes').value;
         console.log(employeeData);
-
-        createAndUpdateStorage(employeeData);
         alert(employeeData);
     }
     catch (exception) {
@@ -118,14 +148,56 @@ const save = () => {
     }
     employees.push(employeeData);
 }
-function createAndUpdateStorage(employeeData) {
+function createAndUpdateStorage() {
     let employeePayrollList = JSON.parse(localStorage.getItem("EmployeePayrollList"));
-    if(employeePayrollList != undefined)
-        employeePayrollList.push(employeeData);
-    else
-        employeePayrollList = [employeeData];
-    alert(employeePayrollList.toString());
+    if(employeePayrollList){
+        let employeeData1 = employeePayrollList.find(empData => empData._id == employeeData._id);
+        if (!employeeData1) employeePayrollList.push(createEmpData());
+        else{
+            const index = employeePayrollList.map(empData => empData._id)
+                                             .indexOf(employeeData1._id);
+            employeePayrollList.splice(index, 1, createEmpData(employeeData1._id));
+        }
+    }else{
+        employeePayrollList = [createEmpData()];
+    }
+    console.log(employeePayrollList);
     localStorage.setItem("EmployeePayrollList", JSON.stringify(employeePayrollList));
+}
+
+const createEmpData = (id) => {
+    let employeePayrollData = new EmployeePayrollData();
+    if (!id) employeePayrollData.id = createNewEmployeeId();
+    else employeePayrollData.id = id;
+    setEmployeePayrollData(employeePayrollData);
+    return employeePayrollData;
+}
+
+function setEmployeePayrollData(employeePayrollData){
+    try {
+        employeePayrollData.name = employeeData._name;
+    } catch (e) {
+        setTextValue('.name-error', e);
+    }
+    employeePayrollData.profilePic = employeeData._profilePic;
+    employeePayrollData.gender = employeeData._gender;
+    employeePayrollData.department = employeeData._department;
+    employeePayrollData.salary = employeeData._salary;
+    employeePayrollData.notes = employeeData._notes;
+    try {
+        employeePayrollData.startDate = new Date(Date.parse(employeeData._startDate));
+    } catch (e) {
+        setTextValue('.date-error', e);
+        throw e;
+    }
+    alert(employeePayrollData.toString());
+}
+
+const createNewEmployeeId = () => {
+    let empId = localStorage.getItem("EmployeeID");
+    empId = !empId ? 1 : (parseInt(empId)+1).toString();
+    localStorage.setItem("EmployeeID", empId);
+    return empId;
 }
 
 function getRadioValue(radios) {
@@ -144,6 +216,29 @@ function getCheckBoxValue(boxes) {
     }
     return boxlist;
 }
+const checkForUpdate = () => {
+    const employeePayrollJson = localStorage.getItem('editEmp');
+    isUpdate = employeePayrollJson ? true : false;
+    if(!isUpdate) return;
+    employeePayrollObj = JSON.parse(employeePayrollJson);
+    setForm();
+}
+
+const setForm = () => {
+
+    console.log(employeeData);
+    setValue('#name',employeeData._name);
+    setSelectedValues('[name=profile]',employeeData._profilePic);
+    setSelectedValues('[name=gender]',employeeData._gender);
+    setCheckBox('[name=department]',employeeData._department);
+    setValue('#salary',employeeData._salary);
+    setTextValue('.salary-output',employeeData._salary);
+    setValue('#notes',employeeData._notes);
+    let date = employeeData._startDate.toString().slice(0,10).split("-");
+    setValue('#day', (Number.parseInt(date[2]) + 1) % 31);
+    setValue('#month', date[1]);
+    setValue('#year',date[0]);
+}
 
 const resetForm = () => {
     setValue('#name', ' ');
@@ -155,6 +250,10 @@ const resetForm = () => {
     setValue('#day', '1');
     setValue('#month', 'January');
     setValue('#year', '2020');
+    setSelectedIndex('#day', 0);
+    setSelectedIndex('#month', 0);
+    setSelectedIndex('#year', 0);
+    localStorage.removeItem('editEmp');
 }
 
 const unsetSelectedValue = (propertyValue) => {
@@ -166,4 +265,40 @@ const unsetSelectedValue = (propertyValue) => {
 const setValue = (id, value) => {
     const element = document.querySelector(id);
     element.value = value;
+}
+
+const setSelectedIndex = (id, index) => {
+    const element = document.querySelector(id);
+    element.selectedIndex = index;
+}
+
+const setSelectedValues = (propertyValue,value)=>{
+    let allItems = document.querySelectorAll(propertyValue);
+    allItems.forEach(item => {
+        if(Array.isArray(value)){
+            if(value.includes(item.value)){
+                item.checked = true;
+            }
+        }
+        else if(item.value==value)
+        item.checked = true;
+    });
+}
+const setCheckBox = (property, values) => {
+    let items = document.querySelectorAll(property);
+    items.forEach(item => {
+        if (values.includes(item.value)) {
+            item.checked = true;
+        }
+    });
+}
+const setTextValue=(id,value)=>{
+    const element = document.querySelector(id)
+    element.textContent=value;
+}
+
+function getEmpDataFromLocalStorage() {
+    return localStorage.getItem("EmployeePayrollList") ?
+        JSON.parse(localStorage.getItem("EmployeePayrollList")) :
+        [];
 }

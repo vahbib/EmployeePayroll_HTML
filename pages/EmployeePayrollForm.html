@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="form-content">
-                <form class="form" action="#" onsubmit="save()" onreset="resetForm()">
+                <form class="form" action="#" onsubmit="save(event)" onreset="resetForm()">
                     <div class="form-head">Employee Payroll Form</div> 
                     <div class="row-content">
                         <label class="label text" for="name">Name: </label>
@@ -59,13 +59,13 @@
                     <div class="row-content">
                         <label class="label text" for="department">Department: </label>
                         <div>
-                            <input class="department" type="checkbox" id="hr" name="hr" value="HR">
+                            <input class="department" type="checkbox" id="hr" name="department" value="HR">
                             <label class="text" for="hr">HR</label>
-                            <input class="department" type="checkbox" style= "margin-left: -20%;" id="marketing" name="marketing" value="Marketing">
+                            <input class="department" type="checkbox" style= "margin-left: -20%;" id="marketing" name="department" value="Marketing">
                             <label class="text" for="marketing">Marketing</label>
-                            <input class="department" type="checkbox" style= "margin-left: -10%;" id="sales" name="sales" value="Sales">
+                            <input class="department" type="checkbox" style= "margin-left: -10%;" id="sales" name="department" value="Sales">
                             <label class="text" for="sales">Sales</label>
-                            <input class="department" type="checkbox" style= "margin-left: -20%;" id="others" name="others" value="Others">
+                            <input class="department" type="checkbox" style= "margin-left: -20%;" id="others" name="department" value="Others">
                             <label class="text" for="others">Others</label>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="row-content">
                         <label class="label text" for="start date">Start Date</label>
-                        <div>
+                        <div id="startDate">
                             <select class="date-select" id="day" name="day">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -131,9 +131,8 @@
                                 <option value="2017">2017</option>
                                 <option value="2016">2016</option>
                             </select>
-                            <error-output class="date-error" for="startDate"></error-output>
                         </div>
-                        
+                        <error-output class="date-error" for="startDate"></error-output>
                     </div>
                     <div class="row-content">
                         <label class="label text" for="notes">Notes: </label>
